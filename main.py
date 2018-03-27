@@ -1,4 +1,6 @@
 from board import Board
+import math
+import aima 
 
 board = Board()
 
@@ -7,9 +9,7 @@ board.popoulateBoardFromInput()
 # Changeable values
 boardWidth = 8
 boardHeight = 8
-
-print(board)
-
+ 
 def moves(board, color):
     moves_count = 0
     empty = '-'
@@ -68,9 +68,43 @@ def moves(board, color):
 def massacre(board):
     player = 'O'
     opponent = '@'
+    empty = '-'
+    blocked = 'X'
+    whiteLoc = board.getLoc("white")
     
+    moves= []
+            
+    for i in board.getLoc('black'):
+        col = i[0]
+        row = i[1]
+        
+        up = False
+        down = False
+        left = False
+        right = False
+        
+        if (board.board[row-1][col] in (player+blocked)) and row > 0:
+            up = True
+        if (board.board[row+1][col] in (player+blocked)) and row < 7:
+            down = True
+        if (board.board[row][col+1] in (player+blocked)) and col < 7:
+            right = True
+        if (board.board[row][col-1] in (player+blocked)) and col > 0:
+            left = True
+        
+        while(not(up and down) or not(left and right)):
+            for j in whiteLoc:
+                if next(j,i):
+                    continue
+                
+                
+            
 
-
+def next(p1, p2):
+    if abs(p1[0] - p2[0]) == 1 or abs(p1[1] -p2[0]) == 1:
+        return True
+    else:
+        return False
 
 print(moves(board, 'white'))
 print(moves(board, 'black'))
@@ -82,3 +116,13 @@ print(moves(board, 'black'))
 # - - - - - - - -
 # - - - - - - - @
 # X - - - - - - X
+
+
+#X - - - - - - X
+#- - - - - - - -
+#- - - - - O - -
+#- - - - @ O - -
+#- - - - - - O -
+#- - - - - O @ -
+#- - - - - - - @
+#X - - - - - - X
