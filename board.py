@@ -1,3 +1,5 @@
+import copy
+
 class Board:
     WIDTH = 8
     HEIGHT = 8
@@ -33,12 +35,13 @@ class Board:
         for i in range (Board.HEIGHT):
             for j in range (Board.WIDTH):
                 if(self.board[i][j] == player):
-                    result.append([j,i])
+                    result.append([i,j])
         return result
     
     def makeMove(self, oldCoord, newCoord):
         
-        result = list(self.board)
+        result = copy.deepcopy(self.board)
+        
         
         result[oldCoord[0]][oldCoord[1]] = "-"
         result[newCoord[0]][newCoord[1]] = "O"

@@ -1,7 +1,7 @@
 from board import Board
-import search
+from search import Problem
 
-class BoardProblem(search.Problem):
+class BoardProblem(Problem):
     
     def __init__(self,initial,goal=None):
         super().__init__(initial, goal)
@@ -19,7 +19,7 @@ class BoardProblem(search.Problem):
         for i in state.getLoc("white"):
             row = i[0]
             col = i[1]
-            
+            print(row,col)
             #Left movement
             if col > 0 and state.board[row][col-1] != blocked:
                     if col-1 == empty:
