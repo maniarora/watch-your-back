@@ -1,10 +1,11 @@
 from board import Board
+from BoardProblem import BoardProblem
 import math
-import aima 
+import aima
 
 board = Board()
 
-board.popoulateBoardFromInput()
+board.populateBoardFromInput()
 
 # Changeable values
 boardWidth = 8
@@ -66,48 +67,17 @@ def moves(board, color):
     return moves_count
 
 def massacre(board):
-    player = 'O'
-    opponent = '@'
-    empty = '-'
-    blocked = 'X'
-    whiteLoc = board.getLoc("white")
+    problem = search.Problem(board,None)
     
-    moves= []
-            
-    for i in board.getLoc('black'):
-        col = i[0]
-        row = i[1]
-        
-        up = False
-        down = False
-        left = False
-        right = False
-        
-        if (board.board[row-1][col] in (player+blocked)) and row > 0:
-            up = True
-        if (board.board[row+1][col] in (player+blocked)) and row < 7:
-            down = True
-        if (board.board[row][col+1] in (player+blocked)) and col < 7:
-            right = True
-        if (board.board[row][col-1] in (player+blocked)) and col > 0:
-            left = True
-        
-        while(not(up and down) or not(left and right)):
-            for j in whiteLoc:
-                if next(j,i):
-                    continue
-                
-                
-            
-
-def next(p1, p2):
-    if abs(p1[0] - p2[0]) == 1 or abs(p1[1] -p2[0]) == 1:
-        return True
-    else:
-        return False
 
 print(moves(board, 'white'))
 print(moves(board, 'black'))
+problem = BoardProblem(board)
+print(problem.actions(problem.initial))
+
+                
+
+        
 # X O O O O O O X
 # - @ - - - - - -
 # - @ - - - - - -

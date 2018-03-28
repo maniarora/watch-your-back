@@ -6,7 +6,7 @@ class Board:
         self.whiteCount = 0
         self.blackCount  = 0
         
-    def popoulateBoardFromInput(self):
+    def populateBoardFromInput(self):
         for i in range(Board.HEIGHT):
             self.board[i] = input().split()
             self.whiteCount += self.board[i].count('O')
@@ -33,5 +33,14 @@ class Board:
         for i in range (Board.HEIGHT):
             for j in range (Board.WIDTH):
                 if(self.board[i][j] == player):
-                    result.append([i,j])
+                    result.append([j,i])
+        return result
+    
+    def makeMove(self, oldCoord, newCoord):
+        
+        result = list(self.board)
+        
+        result[oldCoord[0]][oldCoord[1]] = "-"
+        result[newCoord[0]][newCoord[1]] = "O"
+        
         return result
