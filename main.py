@@ -73,7 +73,8 @@ def massacre(board):
 print(moves(board, 'white'))
 print(moves(board, 'black'))
 problem = BoardProblem(board)
-print(problem.actions(problem.initial))
+actions = problem.actions(problem.initial)
+print(problem.result(problem.initial, actions[5]))
 
                 
 

@@ -15,8 +15,8 @@ class BoardProblem(Problem):
         blocked = 'X'
         
         
-        row = actions[1][0]
-        col = actions[1][1]
+        row = action[1][0]
+        col = action[1][1]
             
         #Left movement
         if action[0] == "LEFT":
