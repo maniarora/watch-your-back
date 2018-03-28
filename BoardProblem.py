@@ -63,7 +63,7 @@ class BoardProblem(Problem):
         whites =  state.getLoc("white")
         
         actions = []
-        for i in white:
+        for i in whites:
             actions.append(["UP",i])
             actions.append(["DOWN",i])
             actions.append(["LEFT",i])
