@@ -53,8 +53,9 @@ class Board:
     def makeMove(self, oldCoord, newCoord):
         
         result = copy.deepcopy(self)
-        
-        
+        result[oldCoord[0]][oldCoord[1]] = "-"
+        result[newCoord[0]][newCoord[1]] = "O"
+
         print(print_board(self.board))
         return result
     
