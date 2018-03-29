@@ -13,10 +13,9 @@ class Problem(object):
 
 class BoardProblem(Problem):
 
-    def __init__(self, initial, goal):
-        super().__init__(self,initial,goal)
-        self.initial = initial
-
+    def __init__(self, initial, goal=None):
+        super().__init__(initial,goal)
+        
     def result(self, state,action):
 
         player = "O"
@@ -90,7 +89,8 @@ class BoardProblem(Problem):
 
 
     def h(self, node):
-        x1, y1 = node.state.getLoc()
+        print(node.state.getLoc('white'))
+        x1, y1 = node.state.getLoc('white')
         x2, y2 = self.goal
         return abs(x2-x1) + abs(y2-y1)
 

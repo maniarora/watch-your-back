@@ -17,20 +17,21 @@ board.populateBoardFromInput()
 # Check which run mode is desired
 mode = input()
 
+problem = BoardProblem(board)
+actions = problem.actions(problem.initial)
+
 if(mode == 'Moves'):
     print(getMoves.moves(board, 'white'))
     print(getMoves.moves(board, 'black'))
 
 elif(mode == 'Massacre'):
     print("Doing massacre")
-    print(astar_search(BoardProblem))
+    print(astar_search(problem))
 
 def massacre(board):
     problem = search.Problem(board,None)
 
 
-problem = BoardProblem(board)
-actions = problem.actions(problem.initial)
 
 # print(board.print_board())
 
