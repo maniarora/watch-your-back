@@ -28,15 +28,13 @@ def moves(board, color):
             if board.board[i][j] == player:
 
                 # Row comparisons
-
                 moves_count = checkleft(board.board, i, j, moves_count)
-
                 moves_count = checkright(board.board, i, j, moves_count)
 
                 # Column comparisons
                 moves_count = checkupwards(board.board, i, j, moves_count)
-
                 moves_count = checkdownwards(board.board, i, j, moves_count)
+
     return moves_count
 
 
