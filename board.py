@@ -13,9 +13,9 @@ class Board:
     # Reading in the board
     def populateBoardFromInput(self):
         for i in range(Board.HEIGHT):
-            self.board[i] = input().split()
-            self.whiteCount += self.board[i].count('O')
-            self.blackCount += self.board[i].count('@')
+            self.board[row] = input().split()
+            self.whiteCount += self.board[row].count('O')
+            self.blackCount += self.board[row].count('@')
 
     def makeMove(self, oldCoord, newCoord):
 
@@ -29,7 +29,7 @@ class Board:
         # return result
 
     def isKilled(self, coord, color):
-        # Checks if a piece is sandwitched, if yes, its killed directly
+        # Checks if a piece is sandwiched, if yes, its killed directly
 
         empty = '-'
         blocked = 'X'
@@ -63,7 +63,7 @@ class Board:
 def __str__(self):
     result = []
     for i in range(Board.WIDTH):
-        result.append(self.board[i])
+        result.append(self.board[row])
     return str(result)
 
 # Print board in order
@@ -71,7 +71,7 @@ def print_board(self):
     for i in range(8):
         str = ""
         for j in range(8):
-            str += self.board[i][j]
+            str += self.board[row][col]
             str += " "
         print(str)
 
@@ -85,10 +85,58 @@ def getLoc(self, color):
 
     for i in range(Board.HEIGHT):
         for j in range(Board.WIDTH):
-            if (self.board[i][j] == player):
-                result.append([i, j])  # Change to [j,i] later for x, y coordinate system
+            if (self.board[row][col] == player):
+                result.append([i, j])  # Change to [col,i] later for x, y coordinate system
 
-    print(result)
     return result
 
+def expandBoard(self):
+    
+    for i in self.getLoc("white"):
+        row = i[0]
+        col = i[1]
+        
+
+def validMoves(coord,color):
+    if color == 'white':
+        player = 'O'
+        
+        moves = []
+        
+        row = coord[0]
+        col = coord[1]
+        
+    #LEFT MOVEMENTS
+    if col > 0 and self.board[row][col - 1] != blocked:
+        if board[row][col - 1] == empty:
+            moves.append([row,col-1])
+        elif board[row][col - 1] == opponent or board[row][col - 1] == player:
+            if col > 1 and board[row][col - 2] == empty:
+                moves.append([row,col-2])
+        
+    #RIGHT MOVEMENTS
+    if col < Board.WIDTH-1 and state.board[row][col+1] != blocked:
+        if col+1 == empty:
+            moves.append([row,col+1])
+        elif state.board[row][col+1] == opponent or state.board[row][col+1] == player:
+            if col < Board.WIDTH-2 and state.board[row][col+2] == empty:
+                moves.append([row,col+2])
+                
+    #UP MOVEMENTS
+    if row > 0 and state.board[row-1][col] != blocked:
+        if state.board[row-1][col] == empty:
+            moves.append([row-1,col])
+        elif state.board[row-1][col] == opponent or state.board[row-1][col] == player:
+            if row > 1 and state.board[row-2][col] == empty:
+                moves.append([row-2,col])
+                        
+    #DOWN MOVEMENTS
+    if row < Board.HEIGHT-1 and state.board[row+1][col] != blocked:
+        if state.board[row+1][col] == empty:
+            moves.append( [row + 1, col])
+        elif state.board[row+1][col] == opponent or state.board[row+1][col] == player:
+            if row < Board.HEIGHT-2 and state.board[row+2][col] == empty:
+                moves.append([row+2,col])
+    
+    return moves
 

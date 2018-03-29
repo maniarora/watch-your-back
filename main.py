@@ -20,6 +20,8 @@ mode = input()
 problem = BoardProblem(board)
 actions = problem.actions(problem.initial)
 
+
+
 if(mode == 'Moves'):
     print(getMoves.moves(board, 'white'))
     print(getMoves.moves(board, 'black'))
@@ -27,19 +29,19 @@ if(mode == 'Moves'):
 elif(mode == 'Massacre'):
     print("Doing massacre")
 
-    print(astar_search(problem, board))
+    print(breadthFirst(problem))
 
-def massacre(board):
-    problem = search.Problem(board)
-
-
-
-# print(board.print_board())
-
-# print(problem.result(problem.initial, actions[5]))
-
-
-
+def massacre(problem):
+    
+    states = []
+    
+    states.append(problem.initial)
+    
+    for board in states:
+        
+        for 
+        
+    
 
 
 
