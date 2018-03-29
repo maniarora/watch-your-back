@@ -52,11 +52,35 @@ class Board:
     
     def makeMove(self, oldCoord, newCoord):
         
-        result = copy.deepcopy(self.board)
+        result = copy.deepcopy(self)
         
         
-        result[oldCoord[0]][oldCoord[1]] = "-"
-        result[newCoord[0]][newCoord[1]] = "O"
+        result.board[oldCoord[0]][oldCoord[1]] = "-"
+        result.board[newCoord[0]][newCoord[1]] = "O"
         
         return result
-
+    
+    def isKilled(self, coord,color):
+        
+        empty = '-'
+        blocked = 'X'
+        
+        if color == 'black':
+            player = '@'
+            opponent = 'O'
+        elif color == 'white':
+            player = 'O'
+            opponent = '@'
+            
+            
+        row = coord[0]
+        col = coord[1]
+        hostile = opponent+blocked
+        
+        if self.board[row+1][col] in hostile and self.board[row-1][col] in hostile and row <Board.WIDTH-1 and row > 0 :
+            self.board[row][col] = empty
+        if self.board[row][col+1] in hostile and self.board[row][col-1] in hostile and col < Board.WIDTH-1  and col >0:
+            self.board[row][col] = empty
+        
+            
+            
