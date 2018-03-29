@@ -1,0 +1,5 @@
+Comments.txt
+
+Calculating the number of moves:
+
+The time complexity taken for calculating the number of moves in our program is O(n^2), where n is the length of the board. This is due to

@@ -55,9 +55,7 @@ class Board:
         result = copy.deepcopy(self)
         
         
-        result.board[oldCoord[0]][oldCoord[1]] = "-"
-        result.board[newCoord[0]][newCoord[1]] = "O"
-        
+        print(print_board(self.board))
         return result
     
     def isKilled(self, coord,color):

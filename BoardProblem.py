@@ -90,13 +90,8 @@ class BoardProblem(Problem):
         else:
             return False
 
-
-
-    def h(self, node):
-        print(node.state.getLoc('white'))
-        x1, y1 = node.state.getLoc('white')
-        x2, y2 = self.goal
-        return abs(x2-x1) + abs(y2-y1)
+    def h(self):
+        return (len(state.getLoc("black")))
 
 #     def heuristic(a, b):
 #         (x1, y1) = a
