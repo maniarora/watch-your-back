@@ -1,5 +1,6 @@
 from board import Board
 from BoardProblem import BoardProblem
+import getMoves
 import math
 import aima
 
@@ -7,78 +8,33 @@ board = Board()
 
 board.populateBoardFromInput()
 
-# Changeable values
-boardWidth = 8
-boardHeight = 8
- 
-def moves(board, color):
-    moves_count = 0
-    empty = '-'
-    blocked = 'X'
 
-    # Determining the color of the player
-    if color == 'white':
-        player = 'O'
-        opponent = '@'
-    else:
-        player = '@'
-        opponent = 'O'
+# Check which run mode is desired
+mode = input()
 
-    for i in range(boardHeight):
-        for j in range(boardWidth):
+if(mode == 'Moves'):
+    print(getMoves.moves(board, 'white'))
+    print(getMoves.moves(board, 'black'))
 
-            if board.board[i][j] == player:
+elif(mode == 'Massacre'):
+    print("Doing massacre")
 
-                # Row comparisons
-
-                # Checking for possible left movements
-                if j > 0 and board.board[i][j-1] != blocked:
-                    if board.board[i][j-1] == empty:
-                        moves_count += 1
-                    elif board.board[i][j-1] == opponent or board.board[i][j-1] == player:
-                        if j > 1 and board.board[i][j-2] == empty:
-                                moves_count += 1
-
-                # Checking for possible right movements
-                if j < Board.WIDTH-1 and board.board[i][j+1] != blocked:
-                    if board.board[i][j+1] == empty:
-                        moves_count += 1
-                    elif board.board[i][j+1] == opponent or board.board[i][j+1] == player:
-                        if j < Board.WIDTH-2 and board.board[i][j+2] == empty:
-                                moves_count += 1
-
-                # Column comparisons
-
-                # Checking for possible upwards movements
-                if i > 0 and board.board[i-1][j] != blocked:
-                    if board.board[i-1][j] == empty:
-                        moves_count += 1
-                    elif board.board[i-1][j] == opponent or board.board[i-1][j] == player:
-                        if i > 1 and board.board[i-2][j] == empty:
-                                moves_count += 1
-
-                # Checking for possible downwards movements
-                if i < Board.HEIGHT-1 and board.board[i+1][j] != blocked:
-                    if board.board[i+1][j] == empty:
-                        moves_count += 1
-                    elif board.board[i+1][j] == opponent or board.board[i+1][j] == player:
-                        if i < Board.HEIGHT-2 and board.board[i+2][j] == empty:
-                                moves_count += 1
-    return moves_count
 
 def massacre(board):
     problem = search.Problem(board,None)
-    
 
-print(moves(board, 'white'))
-print(moves(board, 'black'))
+
 problem = BoardProblem(board)
 actions = problem.actions(problem.initial)
+
+print(board.print_board())
+
 print(problem.result(problem.initial, actions[5]))
 
-                
 
-        
+
+
+
 # X O O O O O O X
 # - @ - - - - - -
 # - @ - - - - - -
@@ -89,11 +45,13 @@ print(problem.result(problem.initial, actions[5]))
 # X - - - - - - X
 
 
-#X - - - - - - X
-#- - - - - - - -
-#- - - - - O - -
-#- - - - @ O - -
-#- - - - - - O -
-#- - - - - O @ -
-#- - - - - - - @
-#X - - - - - - X
+# X - - - - - - X
+# - - - - - - - -
+# - - - - - O - -
+# - - - - @ O - -
+# - - - - - - O -
+# - - - - - O @ -
+# - - - - - - - @
+# X - - - - - - X
+
+
