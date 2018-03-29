@@ -1,11 +1,7 @@
 from board import Board
-from BoardProblem import BoardProblem
 import getMoves
 import math
 import copy
-import aima
-from utils import *
-from search import *
 
 
 
@@ -17,10 +13,31 @@ board.populateBoardFromInput()
 # Check which run mode is desired
 mode = input()
 
-problem = BoardProblem(board)
-actions = problem.actions(problem.initial)
 
-
+def massacre(initial):
+    
+    states = []
+    
+    states.append(initial)
+    
+    for board in states:
+        
+       actions = board.expandBoard()
+       
+       
+       for i in actions:
+           
+            state = copy.deepcopy(board)
+            state.makeMove(i[0],i[1])
+            state.isKilled("black")
+            state.isKilled("white")
+            if state.goal_test():
+                return state
+            else:
+                   states.append(state)
+                
+           
+    
 
 if(mode == 'Moves'):
     print(getMoves.moves(board, 'white'))
@@ -29,21 +46,13 @@ if(mode == 'Moves'):
 elif(mode == 'Massacre'):
     print("Doing massacre")
 
-    print(breadthFirst(problem))
+    final = massacre(board)
+    
+    for i in final.moveHistory:
+        print("(%d, %d) -> (%d, %d)" % (i[0][0],i[0][1],i[1][0],i[1][1]))
 
-def massacre(problem):
-    
-    states = []
-    
-    states.append(problem.initial)
-    
-    for board in states:
+
         
-        for 
-        
-    
-
-
 
 
 # X O O O O O O X
@@ -55,7 +64,7 @@ def massacre(problem):
 # - - - - - - - @
 # X - - - - - - X
 
-
+ 
 # X - - - - - - X
 # - - - - - - - -
 # - - - - - O - -

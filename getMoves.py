@@ -1,6 +1,4 @@
 from board import Board
-from BoardProblem import BoardProblem
-
 
 empty = '-'
 blocked = 'X'
