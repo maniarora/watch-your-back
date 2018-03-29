@@ -2,7 +2,7 @@ from board import Board
 from BoardProblem import BoardProblem
 import getMoves
 import math
-
+import copy
 import aima
 from utils import *
 from search import *
@@ -26,10 +26,11 @@ if(mode == 'Moves'):
 
 elif(mode == 'Massacre'):
     print("Doing massacre")
-    print(astar_search(problem))
+
+    print(astar_search(problem, board))
 
 def massacre(board):
-    problem = search.Problem(board,None)
+    problem = search.Problem(board)
 
 
 

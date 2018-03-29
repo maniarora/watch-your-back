@@ -30,9 +30,11 @@ class Board:
                 str += " "
             print(str)
 
+    def __call__(self,node):
+        return self.board
     # Gets all x, y locations for the white player in the board
     def getLoc(self, color):
-        
+
         result = []
         goalState = [[0 for x in range(Board.WIDTH)] for y in range(Board.HEIGHT)]
 
@@ -53,10 +55,11 @@ class Board:
     def makeMove(self, oldCoord, newCoord):
         
         result = copy.deepcopy(self)
-        result[oldCoord[0]][oldCoord[1]] = "-"
-        result[newCoord[0]][newCoord[1]] = "O"
 
-        print(print_board(self.board))
+        result.board[oldCoord[0]][oldCoord[1]] = "-"
+        result.board[newCoord[0]][newCoord[1]] = "O"
+
+        # print(print_board(self.board))
         return result
     
     def isKilled(self, coord,color):
@@ -76,10 +79,9 @@ class Board:
         col = coord[1]
         hostile = opponent+blocked
         
-        if self.board[row+1][col] in hostile and self.board[row-1][col] in hostile and row <Board.WIDTH-1 and row > 0 :
+        if row > 0 and row <Board.WIDTH-1 and self.board[row+1][col] in hostile and self.board[row-1][col] in hostile:
             self.board[row][col] = empty
-        if self.board[row][col+1] in hostile and self.board[row][col-1] in hostile and col < Board.WIDTH-1  and col >0:
+
+        if  col >0 and col < Board.WIDTH-1 and self.board[row][col+1] in hostile and self.board[row][col-1] in hostile:
             self.board[row][col] = empty
         
-            
-            

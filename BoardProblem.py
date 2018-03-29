@@ -2,6 +2,7 @@ from board import Board
 import aima
 from search import *
 from utils import *
+import copy
 
 class Problem(object):
     def __init__(self, initial, goal=None):
@@ -26,7 +27,7 @@ class BoardProblem(Problem):
 
         row = action[1][0]
         col = action[1][1]
-        result = []
+        result = copy.deepcopy(state)
 
         #Left movement
         if action[0] == "LEFT":
@@ -65,7 +66,7 @@ class BoardProblem(Problem):
                     if row < Board.HEIGHT-2 and state.board[row+2][col] == empty:
                         result = state.makeMove([row,col],[row+2,col])
 
-        
+
         #Removes black
         for i in result.getLoc("black"):
             result.isKilled(i,"black")
@@ -90,8 +91,21 @@ class BoardProblem(Problem):
         else:
             return False
 
-    def h(self):
-        return (len(state.getLoc("black")))
+
+    def path_cost(self, c, state1, action, state2):
+        """Return the cost of a solution path that arrives at state2 from
+        state1 via action, assuming cost c to get up to state1. If the problem
+        is such that the path doesn't matter, this function will only look at
+        state2.  If the path does matter, it will consider c and maybe state1
+        and action. The default method costs 1 for every step in the path."""
+        return c + 1
+
+
+    def h(self, node):
+        print(self.goal)
+        x1, y1 = node.state.get_location()
+        x2, y2 = self.
+        return abs(x2-x1) + abs(y2-y1)
 
 #     def heuristic(a, b):
 #         (x1, y1) = a
