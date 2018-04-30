@@ -15,11 +15,17 @@ class Player:
         self.board = board
         
     
-    def update(self, move):
+    def update(self, action):
+        
+        
         self.player.update(move)
         
     def action(self, turns):
         
-        action = self.player.action(turns)
+        if self.phase == 'placing':
+            if (self.turns == 24 and self.colour == "black") or (self.turns == 23 and self.colour == "white") :
+                self.phase = 'moving'
         
-        return action
+        
+        self.board = board
+
