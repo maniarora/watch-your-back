@@ -1,5 +1,38 @@
-Comments.txt
+COMP30024
 
-Calculating the number of moves:
+Weng Kin Lee (822386)
+Manindra Arora (827703)
 
-The time complexity taken for calculating the number of moves in our program is O(n^2), where n is the length of the board. This is due to
+Comments:
+
+1) For calculating the number of available moves, what is the time complexity
+and space complexity of your program? You should not count the time taken to
+read the board configuration from input.
+
+
+The time complexity taken for calculating the number of moves in our program is
+O(n^2), where n is the length of the board. This is due to implementing a nested
+for loop to execute the search.
+
+In terms of space complexity, since we are only using a counter 'moves_count'
+to return the output, the complexity should be O(1) as we are not storing
+anything extra.
+
+2) For calculating the sequence of moves to eliminate all enemy pieces, how
+have you modelled the problem as a search problem? What search algorithm does
+your program use? If applicable, what is the branching factor of your search
+tree? What is the maximum search depth? Does your algorithm always return the
+shortest possible sequence of moves that will eliminate all enemy pieces?
+
+Having a Board Class, we will treat each instance of the class as a state of
+the game. The initial state of the game would be the input given to the board at
+the start of the program. The goal state would be an instance of the game where
+there is no more black pieces on the board. For the actions, each distinct
+movement of any white piece would be considered as an action, thus changing the
+state of the game when an action is executed.
+
+For our search algorithm, we have implemented the Breadth-First Search as it
+is complete, provided that the branching factor is finite. The maximum search
+depth would be the depth where the solution is first found. Unfortunately, this
+algorithm does not always return the shortest possible sequence of moves as it
+will always take the first instance where all black pieces are eliminated.

@@ -20,8 +20,8 @@ def main():
 
     # initialise the game and players
     game  = _Game()
-    white = _Player(options.white_player, 'white')
-    black = _Player(options.black_player, 'black')
+    white = _Player(options.white_player, 'white', game.board)
+    black = _Player(options.black_player, 'black', game.board)
 
     # now, play the game!
     player, opponent = white, black # white has first move
@@ -40,6 +40,8 @@ def main():
             break
         print(game)
         opponent.update(action)
+        
+        
         # other player's turn!
         player, opponent = opponent, player
 

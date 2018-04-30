@@ -40,7 +40,7 @@ class Board:
     def is_killed(self, color):
 
 
-        # Checking and storing player, opponent symbolss
+        # Checking and storing player, opponent symbols
         if color == 'black':
             player      = '@'
             opponent    = 'O'
@@ -70,7 +70,7 @@ class Board:
                     # Piece is killed
                     self.board[row][col] = EMPTY
 
-    # Gets a list of the locations of all player's pieces
+    # Gets a list of the locations of all the 'color'-ed pieces
     def get_location(self, color):
         result = []
 
