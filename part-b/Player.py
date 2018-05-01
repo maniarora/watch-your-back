@@ -15,11 +15,25 @@ class Player:
         self.board = board
         
     
-    def update(self, action):
-        
-        
-        self.player.update(move)
-        
+    def update(self, action, board):
+
+
+        if action == None :
+            return board
+        else:
+            if isinstance(action[0], int):
+                # Place opponent piece on board
+                board[action[1], action[0]] = getOpponent(self)
+
+            # else:
+                #Move opponents piece on board
+
+        return board
+
+
+
+
+
     def action(self, turns, board):
         
         if self.phase == 'placing':
@@ -32,16 +46,17 @@ class Player:
         # For placing phase
         if self.phase == 'placing':
             pos = placePiece()
+
             return (pos[1],pos[0])
         
-        elif self.phase == 'moving':
+        # elif self.phase == 'moving':
             #insert moving algorithm
         
 
         
  
         
-        
+
     def checkFirstFree(pos):
         y = pos[0]
         x = pos[1]
@@ -94,4 +109,11 @@ class Player:
                             continue
             return None
                         
-        
+    def getOpponent(self):
+        if self.colour == "white":
+            player = "O"
+            opponent = "@"
+        else:
+            player = "@"
+            opponent = "O"
+        return opponent
