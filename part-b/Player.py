@@ -1,3 +1,5 @@
+from random import randint
+
 
 class Player:
     """Wrapper for a Player class to simplify initialization"""
@@ -20,13 +22,13 @@ class Player:
         
         self.player.update(move)
         
-    def action(self, turns, board):
+    def action(self, turns):
         
         if self.phase == 'placing':
-            if (self.turns == 24 and self.colour == "black") or (self.turns == 23 and self.colour == "white") :
+            if (turns == 24 and self.colour == "black") or (turns == 23 and self.colour == "white") :
                 self.phase = 'moving'
+            
         
-        self.board = board
         
         
         # For placing phase
@@ -34,7 +36,7 @@ class Player:
             pos = placePiece()
             return (pos[1],pos[0])
         
-        elif self.phase == 'moving':
+        #elif self.phase == 'moving':
             #insert moving algorithm
         
 
@@ -80,7 +82,7 @@ class Player:
                             return free_pos
                         else:
                             continue
-            return None
+            return (randint(0,8), randint(0,6))
                         
         elif self.colour == "black":
             for i in range(7,1,-1):
@@ -92,6 +94,6 @@ class Player:
                             return free_pos
                         else:
                             continue
-            return None
+            return (randint(0,7),randint(2,7))
                         
         

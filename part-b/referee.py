@@ -5,6 +5,7 @@
 import time
 import argparse
 import importlib
+import copy
 
 VERSION_INFO = """Referee version 1.1 (released Apr 08 2018)
 Plays a basic game of Watch Your Back! between two Player classes
@@ -20,8 +21,8 @@ def main():
 
     # initialise the game and players
     game  = _Game()
-    white = _Player(options.white_player, 'white', game.board)
-    black = _Player(options.black_player, 'black', game.board)
+    white = _Player(options.white_player, 'white', copy.deepcopy(game.board))
+    black = _Player(options.black_player, 'black', copy.deepcopy(game.board))
 
     # now, play the game!
     player, opponent = white, black # white has first move
@@ -30,7 +31,7 @@ def main():
         if options.delay:
             time.sleep(options.delay)
         turns = game.turns
-        action = player.action(turns)
+        action = player.action(turns, copy.deepcopy(game.board))
         try:
             game.update(action)
         except _InvalidActionException as e:
