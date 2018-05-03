@@ -31,7 +31,7 @@ def main():
         if options.delay:
             time.sleep(options.delay)
         turns = game.turns
-        action = player.action(turns, copy.deepcopy(game.board))
+        action = player.action(turns)
         try:
             game.update(action)
         except _InvalidActionException as e:
@@ -500,8 +500,8 @@ class _Game:
 
 class _Player:
     """Wrapper for a Player class to simplify initialization"""
-    def __init__(self, player_class, colour):
-        self.player = player_class(colour)
+    def __init__(self, player_class, colour, board):
+        self.player = player_class(colour, board)
     def update(self, move):
         self.player.update(move)
     def action(self, turns):
