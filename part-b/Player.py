@@ -1,22 +1,16 @@
 from random import randint
-
+from gamerep import Board , Piece
+from pywt._thresholding import threshold
 
 class Player:
-    """Wrapper for a Player class to simplify initialization"""
-    def __init__(self, colour, board):
+    def __init__(self, colour):
         self.colour = colour
         
          # board configuration (takes from game itself)
-        self.board = board
+        self.board = Board()
         
         # setting initial phase of placing pieces
         self.phase = "placing"
-        
-    #Used to update the board after every turn 
-    def syncBoard(self,board):
-        self.board = board
-        
-    
 
     def update(self, action):
 
@@ -26,7 +20,17 @@ class Player:
         else:
             if isinstance(action[0], int):
                 # Place opponent piece on board
-                self.board[action[1]][action[0]] = self.getOpponent()
+                self.board.grid[action] = self.getOpponent()
+                
+                piece = Piece(self.getOpponent(), action , self.board)
+                piece.makemove(action)
+                
+                self.board = piece.board
+                
+                if self.colour == "white":
+                    self.board.black_pieces.append(piece)
+                elif self.colour == "black":
+                    self.board.white_pieces.append(piece)
 
             # else:
                 #Move opponents piece on board
@@ -38,118 +42,18 @@ class Player:
 
 
     def action(self, turns):
-        
         if self.phase == 'placing':
-            if (turns == 24 and self.colour == "black") or (turns == 23 and self.colour == "white") :
+            if (turns == 23 and self.colour == "black") or (turns == 24 and self.colour == "white") :
                 self.phase = 'moving'
-            
-        
-        
-        
+             
         # For placing phase
         if self.phase == 'placing':
-            pos = self.placePiece()
-
-            return (pos[1],pos[0])
-        
-
-        # elif self.phase == 'moving':
-            #insert moving algorithm
-        
-
-        
- 
-        
-
-    def checkBestFree(self,pos):
-        y = pos[0]
-        x = pos[1]
-        
-        player = self.board[y][x]
-        empty = "-"
-        blocked = "X"
-        opponent = "@" if player == "O" else "O"
-        threshold = range(0,5) if opponent == "O" else range(2,7)
-        
-        
-        #Case where pos is at the side edges of the board.
-        if x == 0 and self.board[y][x+1] == empty:
-            return (y,x+1)
-        elif x == 7 and self.board[y][x-1] == empty:
-            return (y, x-1) 
-        
-        
-        # Case where pos is at the top and bottom edges of the board.
-        if y == 0:
-            if self.board[y+1][x] == empty and y+1 in threshold:
-                return (y+1,x)
-            elif self.board[y][x-1] == empty:
-                return (y,x- 1)
-            elif self.board[y][x+1] == empty:
-                return (y,x+1)
-        elif y == 7:
-            if self.board[y-1][x] == empty and y-1 in threshold:
-                return (y+1,x)
-            elif self.board[y][x-1] == empty:
-                return (y,x- 1)
-            elif self.board[y][x+1] == empty:
-                return (y,x+1)
+            return self.placePiece()
                 
-        
-        # If above is taken and bottom is free
-        if self.board[y-1][x] == opponent and self.board[y+1][x] == empty and y+1 in threshold:
-            return(y+1,x)
-        # If left is taken and right is free
-        elif self.board[y][x-1] == empty:
-            return(y,x- 1)
-        
-        # Places them left or above as preference:
-        if self.board[y-1][x] == empty and y-1 in thresholds:
-            return(y-1,x)
-        elif self.board[y][x-1] == empty:
-            return(y,x-1)
-        #No need to put right or down because by default is always going to be
-        #a piece at either left or up.
+#         elif self.phase == 'moving':
             
-    
-    def placePiece(self):
-        # Check whether an opponent piece is on the board, and places a piece
-        # next to that piece
-        
-        empty = "-"
-        blocked = "X"
-        opponent = self.getOpponent()
-        player = "O" if opponent == "@" else "@"
-            
-            
-        if self.colour == "white":
-            for i in range(7):
-                for j in range(8):
-                    if self.board[i][j] == opponent:
-                        free_pos = self.checkBestFree((i,j))
-                        if free_pos != None:
-                            self.board[free_pos[0]][free_pos[1]] = player
-                            if self.isSurrounded(i,j):
-                                self.board[i][j] = empty
-                            return free_pos
-                        else:
-                            continue
-            return (randint(0,7), randint(0,6))
-                        
-        elif self.colour == "black":
-            for i in range(7,1,-1):
-                for j in range(8):
-                    if self.board[i][j] == opponent:
-                        free_pos = self.checkBestFree((i,j))
-                        if free_pos != None:
-                            self.board[free_pos[0]][free_pos[1]] = player
-                            if self.isSurrounded(i,j):
-                                self.board[i][j] = empty
-                            return free_pos
-                        else:
-                            continue
-            return (randint(0,7),randint(2,7))
-                        
+             
+                                  
     def getOpponent(self):
         
         #Check whether a player piece is surrounded by its enemies.
@@ -161,36 +65,122 @@ class Player:
             opponent = "O"
         return opponent
     
-    # Check whether the  piece of (x,y) is surrounded by opponent pieces
-    def isSurrounded(self,y,x):
+    def placePiece(self):
         
-        player = self.board[y][x]
-        blocked = "X"
-        if player == '@':
-            opponent = 'O'
+        # Initilising constants to use throughtout the process.
+        player = "O" if self.getOpponent() == "@" else "@"
+        opponent = self.getOpponent()
+        ythreshold = {"white" : (0,5) , "black" : (2,7)}
+        threshold = ythreshold[self.colour]
+        
+        
+        #Assigns enemy list
+        if player == "O":
+            enemy = self.board.black_pieces
         else:
-            opponent = '@'
-            
-        
-        if x == 0 or x == 7:
-            return False
-        
-            
-        
-        if y == 0 or y == 7:
-            if(self.board[y][x+1] == opponent or self.board[y-1][x] == blocked) and (self.board[y][x-1] == opponent or self.board[y][x-1] == blocked):
-                return True
-            else:
-                return False
-            
-            
-        
-        #Case where it's not on any edge
-        if (self.board[y-1][x] == opponent or self.board[y-1][x] == blocked) and (self.board[y+1][x] == opponent or self.board[y+1][x] == blocked):
-            return True
-        elif (self.board[y][x+1] == opponent or self.board[y-1][x] == blocked) and (self.board[y][x-1] == opponent or self.board[y][x-1] == blocked):
-            return True
+            enemy = self.board.white_pieces
+         
+        # Commented out code is placing next to enemy wherever possible
+        # One player will have disadvantage if both use the same strategy
+        # If no enemy, randomly place piece   
+        if len(enemy) == 0:
+             
+            return self.place_piece_random(threshold)
+   
+        # If there is pieces, puts a piece on the left of the first enemy piece
+        # by default
         else:
-            return False
+             
+            return self.place_piece_enemy(threshold, enemy)
+
+            
+            
+                
+    def place_piece_random(self, threshold):
+        """
+        Places a piece randomly on the board based on a given y axis threshold
+        
+        """
+        square = (randint(0,7), randint(threshold[0],threshold[1]))
+        corners = [(0,0), (0,7),(7,0),(7,7)]
+        player = "O" if self.getOpponent() == "@" else "@"
+        
+        # Checks if square is assigned to a corner
+        while square in corners:
+            square = (randint(0,7), randint(threshold[0],threshold[1]))
+        
+        # Checks if the square is already occupied by another piece.
+        while self.board.grid[square] != "-":
+               square = (randint(0,7), randint(threshold[0],threshold[1]))
+        # Puts the piece in the player's board
+        self.board.grid[square] = player
+        
+        # Creates piece from square and adds itself to list of pieces
+        piece = Piece(player, square, self.board )
+        piece.makemove(square)
+        self.board = piece.board
+        
+        if player == "O":
+            self.board.white_pieces.append(piece)
+        elif player == "@":
+            self.board.black_pieces.append(piece)
+        
+        # Return the action
+        return square
     
+    def place_piece_enemy(self, threshold, enemy):
+        """ 
+        Places a piece on the free spot of any existing enemy piece.
+        
+        """
+        
+        player = "O" if self.getOpponent() == "@" else "@"
+        
+        free_space = None
+        for i in enemy:
+            
+            if not i.alive:
+                continue
+            
+            free_spaces = i.surrounded()
+            
+            # Checks which free space is valid
+            for space in free_spaces:
+                if space[1] in range(threshold[0],threshold[1]):
+                    free_space = space
+                    
+                    # Places the piece in the free space
+                    self.board.grid[free_space] = player
+                    piece = Piece(player, free_space, self.board)
+                    eliminated_pieces = piece.makemove(free_space)
+                    
+                    # Checks that if free_space causes the placed piece
+                    # to be eliminated, roll back the move and place it 
+                    # elsewhere.
+                    if piece in eliminated_pieces:
+                        piece.undomove(free_space, eliminated_pieces)
+                        self.board.grid[free_space] = "-"
+                    else:
+                        break
+                # Default is having no free_space.
+                else:
+                    free_space = None         
+  
+            if free_space == None:
+                continue
+            
+            else:
+                # Assigns the placed piece in the piece list.
+                if player == "O":
+                    self.board.white_pieces.append(piece)
+                elif player == "@":
+                    self.board.black_pieces.append(piece)
+                
+                return free_space
+            
+        if free_space == None:
+            return self.place_piece_random(threshold)
+    
+        
+        
         
