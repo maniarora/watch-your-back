@@ -66,6 +66,12 @@ class Player:
         return opponent
     
     def placePiece(self):
+        """
+        Does the actual placing of the pieces. Will either place randomly
+        or place next to the enemy in a position where it doesn't get 
+        eliminated.
+        
+        """
         
         # Initilising constants to use throughtout the process.
         player = "O" if self.getOpponent() == "@" else "@"
@@ -93,9 +99,7 @@ class Player:
              
             return self.place_piece_enemy(threshold, enemy)
 
-            
-            
-                
+                         
     def place_piece_random(self, threshold):
         """
         Places a piece randomly on the board based on a given y axis threshold
@@ -180,7 +184,3 @@ class Player:
             
         if free_space == None:
             return self.place_piece_random(threshold)
-    
-        
-        
-        

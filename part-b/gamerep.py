@@ -60,7 +60,7 @@ class Board:
             if piece.alive and piece.pos == square:
                 return piece
     def shrink_board(self):
-        #Max shrinks is two
+        # This was adapted from the referee.py method.
         
         s = self.n_shrinks
         
@@ -88,6 +88,8 @@ class Board:
                         self.black_pieces.remove(piece)
             self.grid[square] = CORNER
             
+            # Assign the squares to be checked based on which corner it is
+            # checking for.
             if corner == (s,s):
                 adjacent_squares = [step(corner, DOWN) , step(corner,RIGHT)]
             elif corner == (s,7-s):
@@ -96,12 +98,18 @@ class Board:
                 adjacent_squares = [step(corner, UP) , step(corner,LEFT)]
             elif corner == (s,7-s):
                 adjacent_squares = [step(corner, DOWN) , step(corner,LEFT)]
-                
-            
+                           
+            # Selecting the piece on the adjacent square, it then "makes" a 
+            # move to simulate whether the piece dies or not
             for i in adjacent_squares:
                 for piece in self.black_pieces + self.white_pieces:
                     if piece.pos == i:
                         piece.makemove(piece.pos)
+                        self.grid[piece.pos] = BLANK
+                        for piece in self.black_pieces + self.white_pieces:
+                            piece.board = self
+                    
+            
                        
 class Piece:
     """
@@ -138,6 +146,8 @@ class Piece:
         
         """
         free_spaces = []
+        
+        # Tests for all direction whether it is an empty square.
         for direction in DIRECTIONS:
             adjacent_square = step(self.pos, direction)
             if adjacent_square in self.board.grid:
