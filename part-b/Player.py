@@ -42,15 +42,21 @@ class Player:
 
 
     def action(self, turns):
-        if self.phase == 'placing':
-            if (turns == 23 and self.colour == "black") or (turns == 24 and self.colour == "white") :
-                self.phase = 'moving'
-             
+        print(self.phase, self.colour, turns)
+
         # For placing phase
         if self.phase == 'placing':
-            return self.placePiece()
+            action =  self.placePiece()
+        
+            if (turns == 23 and self.colour == "black") or (turns == 22 and self.colour == "white") :
+                self.phase = 'moving'
+            
+            return action
                 
-#         elif self.phase == 'moving':
+        elif self.phase == 'moving':
+            
+            
+            return ((1,0),(2,0))
             
              
                                   
@@ -124,6 +130,9 @@ class Player:
         piece.makemove(square)
         self.board = piece.board
         
+        for i in self.board.white_pieces + self.board.black_pieces:
+            i.board = self.board
+        
         if player == "O":
             self.board.white_pieces.append(piece)
         elif player == "@":
@@ -174,6 +183,9 @@ class Player:
                 continue
             
             else:
+                # Syncs up all the boards of each piece
+                for i in self.board.white_pieces + self.board.black_pieces:
+                    i.board = self.board
                 # Assigns the placed piece in the piece list.
                 if player == "O":
                     self.board.white_pieces.append(piece)
