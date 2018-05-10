@@ -69,10 +69,15 @@ class Player:
                 
         elif self.phase == 'moving':
             
+            
+            
             print(self.board,"\n")
             lst = self.expand_board()
             
-
+            if (turns == 127 and self.colour == "black") or (turns == 126 and self.colour == "white") :
+                self.board.shrink_board()
+                
+            
             best_move = min(lst,key=itemgetter(1))[2]
             
             self.update(best_move)
@@ -234,7 +239,10 @@ class Player:
                     oldpos = i.pos
                     for j in i.moves():
                         eliminated_pieces = i.makemove(j)
-                        possible_moves.append((i.board, self.get_utility(i.board) , (oldpos , i.pos)))
+                        utility = self.get_utility(i.board)
+                        if i in eliminated_pieces:
+                            utility += 200
+                        possible_moves.append((i.board, utility , (oldpos , i.pos) ))
                         i.undomove(oldpos, eliminated_pieces)
                         
         if player == "@":
@@ -243,7 +251,10 @@ class Player:
                     oldpos = i.pos
                     for j in i.moves():
                         eliminated_pieces = i.makemove(j)
-                        possible_moves.append((i.board, self.get_utility(i.board) , (oldpos , i.pos) ))
+                        utility = self.get_utility(i.board)
+                        if i in eliminated_pieces:
+                            utility += 300
+                        possible_moves.append((i.board, utility , (oldpos , i.pos) ))
                         i.undomove(oldpos, eliminated_pieces)
                         
         return possible_moves
