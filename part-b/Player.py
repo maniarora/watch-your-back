@@ -13,29 +13,37 @@ class Player:
         # setting initial phase of placing pieces
         self.phase = "placing"
 
-    def update(self, action):
+    # Helper function to synchronize board states
+    def sync_boards(self):
+        for i in self.board.white_pieces + self.board.black_pieces:
+            i.board = self.board
 
+
+    def update(self, action):
 
         if action == None :
             return
         else:
+            # Check if a piece is placed
             if isinstance(action[0], int):
+
                 # Place opponent piece on board
-                self.board.grid[action] = self.getOpponent()
+                self.board.grid[action] = self.getSymbol('opponent')
                 
-                piece = Piece(self.getOpponent(), action , self.board)
+                piece = Piece(self.getSymbol('opponent'), action , self.board)
                 piece.makemove(action)
-                
+
+                # Synchronize both boards
                 self.board = piece.board
-                
+
+                # Update the list representation of the opponents pieces inside board.
                 if self.colour == "white":
                     self.board.black_pieces.append(piece)
                 elif self.colour == "black":
                     self.board.white_pieces.append(piece)
 
+            # Update piece movements
             else:
-                #Move opponents piece on board
-          
                 piece =  self.board.find_piece(action[0])
                 piece.makemove(action[1])
                 
@@ -45,15 +53,9 @@ class Player:
                     self.board.black_pieces.append(piece)
                 else:
                     self.board.white_pieces.append(piece)
-                    
-                for i in self.board.white_pieces + self.board.black_pieces:
-                    i.board = self.board
-                
 
+                self.sync_boards()
         return
-
-
-
 
 
     def action(self, turns):
@@ -81,26 +83,23 @@ class Player:
             best_move = min(lst,key=itemgetter(1))[2]
             
             self.update(best_move)
-#             for i in self.board.white_pieces + self.board.black_pieces:
-#                 i.board = self.board
-#                 
+
             return best_move
             
-
-
-            
-             
-                                  
-    def getOpponent(self):
-        
-        #Check whether a player piece is surrounded by its enemies.
+    def getSymbol(self, player_type):
+        """
+        Helper function to obtain the required player's symbolic representation
+        """
         if self.colour == "white":
             player = "O"
             opponent = "@"
         else:
             player = "@"
             opponent = "O"
-        return opponent
+        return player if player_type == 'player' else opponent
+
+
+
     
     def placePiece(self):
         """
@@ -109,12 +108,15 @@ class Player:
         eliminated.
         
         """
-        
+
         # Initialising constants to use throughtout the process.
-        player = "O" if self.getOpponent() == "@" else "@"
-        opponent = self.getOpponent()
-        ythreshold = {"white" : (0,5) , "black" : (2,7)}
-        threshold = ythreshold[self.colour]
+        player      = self.getSymbol('player')
+        opponent    = self.getSymbol('opponent')
+
+        # y_threshold here refers to the range of y values for each player in the
+        # starting phase
+        y_threshold = {"white" : (0,5) , "black" : (2,7)}
+        threshold = y_threshold[self.colour]
         
         
         #Assigns enemy list
@@ -122,16 +124,14 @@ class Player:
             enemy = self.board.black_pieces
         else:
             enemy = self.board.white_pieces
-         
-        # Commented out code is placing next to enemy wherever possible
-        # One player will have disadvantage if both use the same strategy
-        # If no enemy, randomly place piece   
+
+        # If no enemy piece has been placed, randomly place piece
         if len(enemy) == 0:
              
             return self.place_piece_random(threshold)
    
-        # If there is pieces, puts a piece on the left of the first enemy piece
-        # by default
+        # If enemey pieces exist on the board, puts a piece on the left of the
+        # first enemy piece by default
         else:
              
             return self.place_piece_enemy(threshold, enemy)
@@ -144,7 +144,10 @@ class Player:
         """
         square = (randint(0,7), randint(threshold[0],threshold[1]))
         corners = [(0,0), (0,7),(7,0),(7,7)]
-        player = "O" if self.getOpponent() == "@" else "@"
+
+        # Initialising constants to use throughtout the process.
+        player      = self.getSymbol('player')
+        opponent    = self.getSymbol('opponent')
         
         # Checks if square is assigned to a corner
         while square in corners:
@@ -160,9 +163,8 @@ class Player:
         piece = Piece(player, square, self.board )
         piece.makemove(square)
         self.board = piece.board
-        
-        for i in self.board.white_pieces + self.board.black_pieces:
-            i.board = self.board
+
+        self.sync_boards()
         
         if player == "O":
             self.board.white_pieces.append(piece)
@@ -177,8 +179,11 @@ class Player:
         Places a piece on the free spot of any existing enemy piece.
         
         """
-        
-        player = "O" if self.getOpponent() == "@" else "@"
+
+
+        # Initialising constants to use throughtout the process.
+        player      = self.getSymbol('player')
+        opponent    = self.getSymbol('opponent')
         
         free_space = None
         for i in enemy:
@@ -215,8 +220,7 @@ class Player:
             
             else:
                 # Syncs up all the boards of each piece
-                for i in self.board.white_pieces + self.board.black_pieces:
-                    i.board = self.board
+                self.sync_boards()
                 # Assigns the placed piece in the piece list.
                 if player == "O":
                     self.board.white_pieces.append(piece)
@@ -231,7 +235,7 @@ class Player:
         
     def expand_board(self):
         
-        player = "O" if self.colour == "white" else "@"
+        player = self.getSymbol('player')
         possible_moves = []
         if player == "O":
             for i in self.board.white_pieces:
@@ -267,7 +271,7 @@ class Player:
 
 
     def get_utility(self, board):
-        player = "O" if self.colour == "white" else "@"
+        player = self.getSymbol('player')
         
         sum = 0
         if player == "O":
