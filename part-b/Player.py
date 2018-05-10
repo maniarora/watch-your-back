@@ -57,6 +57,8 @@ class Player:
             
             
             return ((1,0),(2,0))
+
+
             
              
                                   
@@ -79,7 +81,7 @@ class Player:
         
         """
         
-        # Initilising constants to use throughtout the process.
+        # Initialising constants to use throughtout the process.
         player = "O" if self.getOpponent() == "@" else "@"
         opponent = self.getOpponent()
         ythreshold = {"white" : (0,5) , "black" : (2,7)}
@@ -196,3 +198,63 @@ class Player:
             
         if free_space == None:
             return self.place_piece_random(threshold)
+
+
+    def __init__(self):
+        self.root = root
+
+    def minimax(self,node):
+
+
+
+    def min_value(self, node):
+        if self.is_terminal(node):
+            return self.get_utility(node)
+
+        infinity = float('inf')
+        min_value = infinity
+
+        successor_states = self.getSuccessors(node)
+        for state in successor_states:
+            min_value = min(min_value, self.max_value(state))
+        return min_value
+
+
+    def max_value(self, node):
+        if self.is_terminal(node):
+            return self.get_utility(node)
+
+        infinity = float('inf')
+        max_value = -infinity
+
+        successors_states = self.getSuccessors(node)
+        for state in successors_states:
+            max_value = max(max_value, self.min_value(state))
+        return max_value
+
+    def is_terminal(self, node):
+        assert node is not None
+        return ((len(self.board.black_pieces) < 2) and (len(self.board.white_pieces) < 2) ) or \
+                   ((len(self.board.black_pieces) < 2) or (len(self.board.white_pieces) < 2))
+
+
+
+    def get_utility(self):
+        player = "O" if self.colour == "white" else "@"
+
+        if player == "O":
+            for i in self.board.white_pieces:
+                for j in self.board.black_pieces:
+                    sum += manhattan_distance(i.pos,j.pos)
+       else:
+            for i in self.board.black_pieces:
+                for j in self.board.white_pieces:
+                    sum += manhattan_distance(i.pos, j.pos)
+        return sum
+
+
+    # Helper function for utility function
+    def manhattan_distance(start, end):
+        sx, sy = start
+        ex, ey = end
+        return abs(ex - sx) + abs(ey - sy)
