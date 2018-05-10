@@ -1,6 +1,7 @@
 from random import randint
 from gamerep import Board , Piece
-from pywt._thresholding import threshold
+from operator import itemgetter
+import copy
 
 class Player:
     def __init__(self, colour):
@@ -32,8 +33,22 @@ class Player:
                 elif self.colour == "black":
                     self.board.white_pieces.append(piece)
 
-            # else:
+            else:
                 #Move opponents piece on board
+          
+                piece =  self.board.find_piece(action[0])
+                piece.makemove(action[1])
+                
+                self.board = piece.board
+                
+                if piece.player == "@":
+                    self.board.black_pieces.append(piece)
+                else:
+                    self.board.white_pieces.append(piece)
+                    
+                for i in self.board.white_pieces + self.board.black_pieces:
+                    i.board = self.board
+                
 
         return
 
@@ -42,7 +57,6 @@ class Player:
 
 
     def action(self, turns):
-        print(self.phase, self.colour, turns)
 
         # For placing phase
         if self.phase == 'placing':
@@ -55,8 +69,18 @@ class Player:
                 
         elif self.phase == 'moving':
             
+            print(self.board,"\n")
+            lst = self.expand_board()
             
-            return ((1,0),(2,0))
+
+            best_move = min(lst,key=itemgetter(1))[2]
+            
+            self.update(best_move)
+#             for i in self.board.white_pieces + self.board.black_pieces:
+#                 i.board = self.board
+#                 
+            return best_move
+            
 
 
             
@@ -198,63 +222,58 @@ class Player:
             
         if free_space == None:
             return self.place_piece_random(threshold)
-
-
-    def __init__(self):
-        self.root = root
-
-    def minimax(self,node):
-
-
-
-    def min_value(self, node):
-        if self.is_terminal(node):
-            return self.get_utility(node)
-
-        infinity = float('inf')
-        min_value = infinity
-
-        successor_states = self.getSuccessors(node)
-        for state in successor_states:
-            min_value = min(min_value, self.max_value(state))
-        return min_value
-
-
-    def max_value(self, node):
-        if self.is_terminal(node):
-            return self.get_utility(node)
-
-        infinity = float('inf')
-        max_value = -infinity
-
-        successors_states = self.getSuccessors(node)
-        for state in successors_states:
-            max_value = max(max_value, self.min_value(state))
-        return max_value
+        
+        
+    def expand_board(self):
+        
+        player = "O" if self.colour == "white" else "@"
+        possible_moves = []
+        if player == "O":
+            for i in self.board.white_pieces:
+                if i.alive:
+                    oldpos = i.pos
+                    for j in i.moves():
+                        eliminated_pieces = i.makemove(j)
+                        possible_moves.append((i.board, self.get_utility(i.board) , (oldpos , i.pos)))
+                        i.undomove(oldpos, eliminated_pieces)
+                        
+        if player == "@":
+            for i in self.board.black_pieces:
+                if i.alive:
+                    oldpos = i.pos
+                    for j in i.moves():
+                        eliminated_pieces = i.makemove(j)
+                        possible_moves.append((i.board, self.get_utility(i.board) , (oldpos , i.pos) ))
+                        i.undomove(oldpos, eliminated_pieces)
+                        
+        return possible_moves
+                        
 
     def is_terminal(self, node):
         assert node is not None
-        return ((len(self.board.black_pieces) < 2) and (len(self.board.white_pieces) < 2) ) or \
-                   ((len(self.board.black_pieces) < 2) or (len(self.board.white_pieces) < 2))
+        
+        return len([x for x in self.board.black_pieces + self.board.white_pieces if x.alive])
 
 
-
-    def get_utility(self):
+    def get_utility(self, board):
         player = "O" if self.colour == "white" else "@"
-
+        
+        sum = 0
         if player == "O":
-            for i in self.board.white_pieces:
-                for j in self.board.black_pieces:
-                    sum += manhattan_distance(i.pos,j.pos)
-       else:
-            for i in self.board.black_pieces:
-                for j in self.board.white_pieces:
-                    sum += manhattan_distance(i.pos, j.pos)
+            for i in board.white_pieces:
+                if i.alive:
+                    for j in board.black_pieces:
+                        sum += self.manhattan_distance(i.pos,j.pos)
+        else:
+            for i in board.black_pieces:
+                if i.alive:
+                    for j in board.white_pieces:
+                        sum += self.manhattan_distance(i.pos, j.pos)
         return sum
 
 
     # Helper function for utility function
-    def manhattan_distance(start, end):
+    def manhattan_distance(self,start, end):
         sx, sy = start
         ex, ey = end
         return abs(ex - sx) + abs(ey - sy)

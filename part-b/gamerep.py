@@ -32,6 +32,7 @@ class Board:
         
         # Initialises an empty board
         self.grid = {}
+        self.size = 8
         for x in range(8):
             for y in range(8):
                 self.grid[x,y] = BLANK
@@ -109,7 +110,7 @@ class Board:
                         for piece in self.black_pieces + self.white_pieces:
                             piece.board = self
                     
-            
+            self.size -= 2
                        
 class Piece:
     """
