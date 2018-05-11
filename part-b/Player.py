@@ -1,7 +1,15 @@
 from random import randint
-from gamerep import Board , Piece
+from game_representation import Board , Piece
 from operator import itemgetter
 import copy
+
+
+# Helper function for utility function
+def manhattan_distance(start, end):
+    sx, sy = start
+    ex, ey = end
+    return abs(ex - sx) + abs(ey - sy)
+
 
 class Player:
     def __init__(self, colour):
@@ -13,11 +21,22 @@ class Player:
         # setting initial phase of placing pieces
         self.phase = "placing"
 
+    def getSymbol(self, player_type):
+        """
+        Helper function to obtain the required player's symbolic representation
+        """
+        if self.colour == "white":
+            player = "O"
+            opponent = "@"
+        else:
+            player = "@"
+            opponent = "O"
+        return player if player_type == 'player' else opponent
+
     # Helper function to synchronize board states
     def sync_boards(self):
         for i in self.board.white_pieces + self.board.black_pieces:
             i.board = self.board
-
 
     def update(self, action):
 
@@ -85,19 +104,6 @@ class Player:
             self.update(best_move)
 
             return best_move
-            
-    def getSymbol(self, player_type):
-        """
-        Helper function to obtain the required player's symbolic representation
-        """
-        if self.colour == "white":
-            player = "O"
-            opponent = "@"
-        else:
-            player = "@"
-            opponent = "O"
-        return player if player_type == 'player' else opponent
-
 
 
     
@@ -127,7 +133,7 @@ class Player:
 
         # If no enemy piece has been placed, randomly place piece
         if len(enemy) == 0:
-             
+
             return self.place_piece_random(threshold)
    
         # If enemey pieces exist on the board, puts a piece on the left of the
@@ -143,7 +149,7 @@ class Player:
         
         """
         square = (randint(0,7), randint(threshold[0],threshold[1]))
-        corners = [(0,0), (0,7),(7,0),(7,7)]
+        corners = self.board.corner_pieces
 
         # Initialising constants to use throughtout the process.
         player      = self.getSymbol('player')
@@ -180,21 +186,22 @@ class Player:
         
         """
 
-
         # Initialising constants to use throughtout the process.
         player      = self.getSymbol('player')
         opponent    = self.getSymbol('opponent')
         
         free_space = None
         for i in enemy:
-            
+
             if not i.alive:
                 continue
-            
+
             free_spaces = i.surrounded()
-            
+
             # Checks which free space is valid
             for space in free_spaces:
+
+                # Ensure placement of piece is within its own defined starting area.
                 if space[1] in range(threshold[0],threshold[1]):
                     free_space = space
                     
@@ -257,7 +264,7 @@ class Player:
                         eliminated_pieces = i.makemove(j)
                         utility = self.get_utility(i.board)
                         if i in eliminated_pieces:
-                            utility += 300
+                            utility += 200
                         possible_moves.append((i.board, utility , (oldpos , i.pos) ))
                         i.undomove(oldpos, eliminated_pieces)
                         
@@ -269,26 +276,34 @@ class Player:
         
         return len([x for x in self.board.black_pieces + self.board.white_pieces if x.alive])
 
-
     def get_utility(self, board):
+        """
+        Utility function for the algorithm
+        Applies manhattan distance from each piece to all opponents piece and returns the sum
+        :param board:
+        :return:
+        """
         player = self.getSymbol('player')
         
         sum = 0
+
         if player == "O":
+
             for i in board.white_pieces:
                 if i.alive:
                     for j in board.black_pieces:
-                        sum += self.manhattan_distance(i.pos,j.pos)
+                        sum += manhattan_distance(i.pos,j.pos)
+                    if(board.n_shrinks < 2):
+                        for k in board.corner_pieces:
+                            sum += manhattan_distance(i.pos, k)
+
         else:
             for i in board.black_pieces:
                 if i.alive:
                     for j in board.white_pieces:
-                        sum += self.manhattan_distance(i.pos, j.pos)
+                        sum += manhattan_distance(i.pos, j.pos)
+                    if (board.n_shrinks < 2):
+                        for k in board.corner_pieces:
+                            sum += manhattan_distance(i.pos, k)
         return sum
 
-
-    # Helper function for utility function
-    def manhattan_distance(self,start, end):
-        sx, sy = start
-        ex, ey = end
-        return abs(ex - sx) + abs(ey - sy)

@@ -42,6 +42,7 @@ class Board:
         self.n_shrinks = 0
         self.white_pieces = []
         self.black_pieces = []
+        self.corner_pieces = [(0, 0), (7, 0), (7, 7), (0, 7)]
         
                     
                     
@@ -60,6 +61,7 @@ class Board:
         for piece in self.black_pieces + self.white_pieces:
             if piece.alive and piece.pos == square:
                 return piece
+
     def shrink_board(self):
         # This was adapted from the referee.py method.
         
@@ -78,9 +80,11 @@ class Board:
         
         # Shrunk the board once
         self.n_shrinks = s = s + 1
-        
+
+        self.corner_pieces = [(s, s), (s, 7-s), (7-s, 7-s), (7-s, s)]
+
         # replace the corners (and perform corner elimination)
-        for corner in [(s, s), (s, 7-s), (7-s, 7-s), (7-s, s)]:
+        for corner in self.corner_pieces:
             for piece in self.black_pieces + self.white_pieces:
                 if piece.pos == corner:
                     if piece.player == WHITE:
