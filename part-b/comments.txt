@@ -1,4 +1,4 @@
-Watch Your Back 
+COMP30024 Project Part B: Watch Your Back
 Implementation by: Manindra Arora (827703), Weng Kin Lee (822386)
 
 Structure:
@@ -18,20 +18,18 @@ This solution builds upon the sample solution for Project Part A provided by Mat
 - Implementation of the Piece class with certain modifications and added functions.
 
 
-
-*To Do:* More detail about each class.
-
-
-
-
+This solution was used since we believe it makes good use of object oriented principles, and also aids in handling and representing the board along with its pieces. 
 
 Approach:
+
 Search Strategy:
 For the initial placing phase, the strategy does not make use of complex search algorithms. The strategy being used is as follows;
 
 ​	If no enemy piece has been placed, placement of the piece can be done by random since there would not be any major (negative) consequences of a random placement in this stage of the game.
 
-​	If an enemy piece has been placed, 
+​	If an enemy piece has been placed, the player goes through the surrounding empty spaces around the enemy, and by default, places it to the left of the enemy.
+
+For the moving phase, the strategy involved makes an implementation of the minimax algorithm, with the primary focus being on minimizing the utility cost, since ideally, each player would aim to do the same. It iterates through all the possible movement a player can make, and chooses the action with the least utility value. This is done so that each player can be more closer to the enemy, and also further away from the corners.
 
 
 

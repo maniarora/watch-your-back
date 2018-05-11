@@ -1,7 +1,13 @@
-# Taken and modified from sample solution A
+'''
+Subject     : COMP30024
+Project     : Watch Your Back (Part B)
+Authors     : Manindra Arora    (827703)
+            : Weng Kin Lee      (822386)
+Last Edited : 11th May 2018
+'''
 
+# Taken and modified from sample solution for project Part A.
 # HELPERS
-
 WHITE, BLACK, CORNER, BLANK, REMOVED = ['O','@','X','-',' ']
 ENEMIES = {WHITE: {BLACK, CORNER}, BLACK: {WHITE, CORNER}}
 FRIENDS = {WHITE: {WHITE, CORNER}, BLACK: {BLACK, CORNER}}
@@ -159,9 +165,7 @@ class Piece:
                 if self.board.grid[adjacent_square] == BLANK:
                     free_spaces.append(adjacent_square)
         return free_spaces
-        
-        
-    
+
     def moves(self):
         """
         Compute and return a list of the available moves for this piece based

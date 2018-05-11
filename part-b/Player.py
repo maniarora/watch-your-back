@@ -1,10 +1,19 @@
+'''
+Subject     : COMP30024
+Project     : Watch Your Back (Part B)
+Authors     : Manindra Arora    (827703)
+            : Weng Kin Lee      (822386)
+Last Edited : 11th May 2018
+'''
+
+
 from random import randint
 from game_representation import Board , Piece
 from operator import itemgetter
 import copy
 
 
-# Helper function for utility function
+# Helper function to get the utility value
 def manhattan_distance(start, end):
     sx, sy = start
     ex, ey = end
@@ -21,7 +30,7 @@ class Player:
         # setting initial phase of placing pieces
         self.phase = "placing"
 
-    def getSymbol(self, player_type):
+    def get_symbol(self, player_type):
         """
         Helper function to obtain the required player's symbolic representation
         """
@@ -47,9 +56,9 @@ class Player:
             if isinstance(action[0], int):
 
                 # Place opponent piece on board
-                self.board.grid[action] = self.getSymbol('opponent')
+                self.board.grid[action] = self.get_symbol('opponent')
                 
-                piece = Piece(self.getSymbol('opponent'), action , self.board)
+                piece = Piece(self.get_symbol('opponent'), action , self.board)
                 piece.makemove(action)
 
                 # Synchronize both boards
@@ -82,23 +91,23 @@ class Player:
         # For placing phase
         if self.phase == 'placing':
             action =  self.placePiece()
-        
+
+            # Check if each player has placed 12 pieces, if yes switch to moving phase
             if (turns == 23 and self.colour == "black") or (turns == 22 and self.colour == "white") :
                 self.phase = 'moving'
             
             return action
                 
         elif self.phase == 'moving':
-            
-            
-            
+
             print(self.board,"\n")
+
             lst = self.expand_board()
             
             if (turns == 127 and self.colour == "black") or (turns == 126 and self.colour == "white") :
                 self.board.shrink_board()
-                
-            
+
+            # Get the action with the minimum utility value
             best_move = min(lst,key=itemgetter(1))[2]
             
             self.update(best_move)
@@ -116,8 +125,8 @@ class Player:
         """
 
         # Initialising constants to use throughtout the process.
-        player      = self.getSymbol('player')
-        opponent    = self.getSymbol('opponent')
+        player      = self.get_symbol('player')
+        opponent    = self.get_symbol('opponent')
 
         # y_threshold here refers to the range of y values for each player in the
         # starting phase
@@ -152,8 +161,8 @@ class Player:
         corners = self.board.corner_pieces
 
         # Initialising constants to use throughtout the process.
-        player      = self.getSymbol('player')
-        opponent    = self.getSymbol('opponent')
+        player      = self.get_symbol('player')
+        opponent    = self.get_symbol('opponent')
         
         # Checks if square is assigned to a corner
         while square in corners:
@@ -187,8 +196,8 @@ class Player:
         """
 
         # Initialising constants to use throughtout the process.
-        player      = self.getSymbol('player')
-        opponent    = self.getSymbol('opponent')
+        player      = self.get_symbol('player')
+        opponent    = self.get_symbol('opponent')
         
         free_space = None
         for i in enemy:
@@ -242,7 +251,7 @@ class Player:
         
     def expand_board(self):
         
-        player = self.getSymbol('player')
+        player = self.get_symbol('player')
         possible_moves = []
         if player == "O":
             for i in self.board.white_pieces:
@@ -279,11 +288,10 @@ class Player:
     def get_utility(self, board):
         """
         Utility function for the algorithm
-        Applies manhattan distance from each piece to all opponents piece and returns the sum
-        :param board:
-        :return:
+        Applies manhattan distance from each piece to all opponents piece, and also corner pieces
+        and returns the sum
         """
-        player = self.getSymbol('player')
+        player = self.get_symbol('player')
         
         sum = 0
 
@@ -293,6 +301,8 @@ class Player:
                 if i.alive:
                     for j in board.black_pieces:
                         sum += manhattan_distance(i.pos,j.pos)
+
+                    # Checks if final shrink has occured. If not, take corners into consideration
                     if(board.n_shrinks < 2):
                         for k in board.corner_pieces:
                             sum += manhattan_distance(i.pos, k)
@@ -302,6 +312,8 @@ class Player:
                 if i.alive:
                     for j in board.white_pieces:
                         sum += manhattan_distance(i.pos, j.pos)
+
+                    # Checks if final shrink has occured. If not, take corners into consideration
                     if (board.n_shrinks < 2):
                         for k in board.corner_pieces:
                             sum += manhattan_distance(i.pos, k)
