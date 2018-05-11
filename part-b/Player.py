@@ -6,7 +6,6 @@ Authors     : Manindra Arora    (827703)
 Last Edited : 11th May 2018
 '''
 
-
 from random import randint
 from game_representation import Board , Piece
 from operator import itemgetter
@@ -108,16 +107,15 @@ class Player:
             return action
                 
         elif self.phase == 'moving':
-
-            print(self.board,"\n")
-
-            lst = self.expand_board()
             
             if (turns == 127 and self.colour == "black") or (turns == 126 and self.colour == "white") :
                 self.board.shrink_board()
-
+                
+        
+            possible_moves = self.expand_board()
+            
             # Get the action with the minimum utility value
-            best_move = min(lst,key=itemgetter(1))[2]
+            best_move = min(possible_moves,key=itemgetter(1))[2]
             
             self.update(best_move)
 
@@ -261,21 +259,32 @@ class Player:
         
         
     def expand_board(self):
-        
+        """
+        Expands the current board state by returning a list of possible moves,
+        represented by in the form a tuple containing  a board, utility cost and
+        the action move.
+        :return List of tuples in the form as stated above.
+        """
+
         player = self.get_symbol('player')
         possible_moves = []
         if player == "O":
             for i in self.board.white_pieces:
+                # Checks if the piece is alive.
                 if i.alive:
                     oldpos = i.pos
+                    # Iterate through the possible moves.
                     for j in i.moves():
                         eliminated_pieces   = i.makemove(j)
                         utility             = self.get_utility(i.board)
+                        # Check that if the move kills the piece, adds 300 to 
+                        # utility cost, pushing it down the order of which
+                        # move to pick.
                         if i in eliminated_pieces:
-                            utility += 200
+                            utility += 300
                         possible_moves.append((i.board, utility , (oldpos , i.pos) ))
                         i.undomove(oldpos, eliminated_pieces)
-                        
+        # For the case where the player is black.                
         if player == "@":
             for i in self.board.black_pieces:
                 if i.alive:
