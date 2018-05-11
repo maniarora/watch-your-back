@@ -33,17 +33,21 @@ class Player:
     def get_symbol(self, player_type):
         """
         Helper function to obtain the required player's symbolic representation
+        :param player_type: To check whether the player or opponent is referenced.
+        :return: The symbol of the player, according to the player_type
         """
         if self.colour == "white":
-            player = "O"
-            opponent = "@"
+            player      = "O"
+            opponent    = "@"
         else:
-            player = "@"
-            opponent = "O"
+            player      = "@"
+            opponent    = "O"
         return player if player_type == 'player' else opponent
 
-    # Helper function to synchronize board states
     def sync_boards(self):
+        """
+        Helper function to synchronize board states
+        """
         for i in self.board.white_pieces + self.board.black_pieces:
             i.board = self.board
 
@@ -87,6 +91,11 @@ class Player:
 
 
     def action(self, turns):
+        """
+        Given the number of turns that have occured, returns the action accordingly
+        :param turns: number of turns passed
+        :return: action specific to the current phase (placement or moving)
+        """
 
         # For placing phase
         if self.phase == 'placing':
@@ -119,11 +128,10 @@ class Player:
     def placePiece(self):
         """
         Does the actual placing of the pieces. Will either place randomly
-        or place next to the enemy in a position where it doesn't get 
+        or place next to the enemy in a position where it doesn't get
         eliminated.
-        
+        :return: Places a piece on the board, according to existence of enemies
         """
-
         # Initialising constants to use throughtout the process.
         player      = self.get_symbol('player')
         opponent    = self.get_symbol('opponent')
@@ -131,7 +139,7 @@ class Player:
         # y_threshold here refers to the range of y values for each player in the
         # starting phase
         y_threshold = {"white" : (0,5) , "black" : (2,7)}
-        threshold = y_threshold[self.colour]
+        threshold   = y_threshold[self.colour]
         
         
         #Assigns enemy list
@@ -155,9 +163,10 @@ class Player:
     def place_piece_random(self, threshold):
         """
         Places a piece randomly on the board based on a given y axis threshold
-        
+        :param threshold: Range of y values for player in the starting phase
+        :return: Returns the action of placement (tuple)
         """
-        square = (randint(0,7), randint(threshold[0],threshold[1]))
+        square  = (randint(0,7), randint(threshold[0],threshold[1]))
         corners = self.board.corner_pieces
 
         # Initialising constants to use throughtout the process.
@@ -190,9 +199,11 @@ class Player:
         return square
     
     def place_piece_enemy(self, threshold, enemy):
-        """ 
+        """
         Places a piece on the free spot of any existing enemy piece.
-        
+        :param threshold: Range of y values for player in the starting phase
+        :param enemy: List of enemy pieces
+        :return: Action of placing the piece (tuple).
         """
 
         # Initialising constants to use throughtout the process.
@@ -216,8 +227,8 @@ class Player:
                     
                     # Places the piece in the free space
                     self.board.grid[free_space] = player
-                    piece = Piece(player, free_space, self.board)
-                    eliminated_pieces = piece.makemove(free_space)
+                    piece                       = Piece(player, free_space, self.board)
+                    eliminated_pieces           = piece.makemove(free_space)
                     
                     # Checks that if free_space causes the placed piece
                     # to be eliminated, roll back the move and place it 
@@ -258,8 +269,8 @@ class Player:
                 if i.alive:
                     oldpos = i.pos
                     for j in i.moves():
-                        eliminated_pieces = i.makemove(j)
-                        utility = self.get_utility(i.board)
+                        eliminated_pieces   = i.makemove(j)
+                        utility             = self.get_utility(i.board)
                         if i in eliminated_pieces:
                             utility += 200
                         possible_moves.append((i.board, utility , (oldpos , i.pos) ))
@@ -270,26 +281,24 @@ class Player:
                 if i.alive:
                     oldpos = i.pos
                     for j in i.moves():
-                        eliminated_pieces = i.makemove(j)
-                        utility = self.get_utility(i.board)
+                        eliminated_pieces   = i.makemove(j)
+                        utility             = self.get_utility(i.board)
                         if i in eliminated_pieces:
                             utility += 200
                         possible_moves.append((i.board, utility , (oldpos , i.pos) ))
                         i.undomove(oldpos, eliminated_pieces)
                         
         return possible_moves
-                        
 
-    def is_terminal(self, node):
-        assert node is not None
-        
-        return len([x for x in self.board.black_pieces + self.board.white_pieces if x.alive])
 
     def get_utility(self, board):
         """
         Utility function for the algorithm
         Applies manhattan distance from each piece to all opponents piece, and also corner pieces
         and returns the sum
+        :param board: board representation
+        :return: the sum of manhattan distances, from the player to all enemy pieces, and or to the corner pieces
+                dependent on the shrinking
         """
         player = self.get_symbol('player')
         
