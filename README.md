@@ -1,2 +1,48 @@
-# comp30024-project
-Project
+# Watch Your Back
+
+A two player combat board game in python. Can be played with two players or versus an AI bot. 
+Rules of the game can be found [here](https://github.com/maniarora/watch-your-back/blob/master/docs/game-spec-2018.pdf).
+
+##Implementation by: 
+
+- Manindra Arora (827703)
+- Weng Kin Lee (822386)
+
+##Structure:
+
+The structure for the solution is comprised of three main classes, i.e.
+
+- class Player
+- class Board
+- class Piece
+
+and it makes use of two source files, Player.py, containing the Player class, and game_representation.py, containing the Board and the Piece class.
+
+This solution builds upon the sample solution for Project Part A provided by Matt Farrugia. It specifically makes use of the helper constants and the following:
+
+- step function to represent movements of pieces.
+- Implementation of the Board class, including find_piece, with certain modifications and added functions.
+- Implementation of the Piece class with certain modifications and added functions.
+
+This solution was used since we believe it makes good use of object oriented principles, and also aids in handling and representing the board along with its pieces. 
+
+##Approach:
+
+### Search Strategy:
+For the initial placing phase, the strategy does not make use of complex search algorithms. The strategy being used is as follows;
+
+​	If no enemy piece has been placed, placement of the piece can be done by random since there would not be any major (negative) consequences of a random placement in this stage of the game.
+
+​	If an enemy piece has been placed, the player goes through the surrounding empty spaces around the enemy, and by default, places it to the left of the enemy.
+
+For the moving phase, the strategy involved makes an implementation of the minimax algorithm, with the primary focus being on minimizing the utility cost, since ideally, each player would aim to do the same. It iterates through all the possible movement a player can make, and chooses the action with the least utility value. This is done so that each player can be more closer to the enemy, and also further away from the corners.
+
+
+
+### Evaluation Function: 
+The evaluation function makes use of the Manhattan distance. This heuristic was chosen since piece movements in the board is limited to 4 directions only.
+The implementation of the evaluation function in our program consists of cumulating the distances from each player piece being looked at, to all pieces of the opponent. This was done, since ideally, we want the player piece moving closer to the opponent's  piece, for easier elimination.
+Adding to this, before the second (and final) shrink has occurred, each piece being looked at takes into consideration its own distance from that of the corner pieces of the board. This reasoning for this is since prior to the shrinking, it would be 'safer' for the player's pieces to be further away from the corners, to avoid elimination during the shrinking.
+
+Additional classes created for the solution include a Board class and a Piece class. This was done in the additional game_representation.py source file. The purpose of this, is to maintain and make use of, an internal representation of the board for each player, and also to keep track of each piece with greater technicality.
+
