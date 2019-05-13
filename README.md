@@ -3,12 +3,12 @@
 A two player combat board game in python. Can be played with two players or versus an AI bot. 
 Rules of the game can be found [here](https://github.com/maniarora/watch-your-back/blob/master/docs/game-spec-2018.pdf).
 
-##Implementation by: 
+## Implementation by: 
 
 - Manindra Arora (827703)
 - Weng Kin Lee (822386)
 
-##Structure:
+## Structure:
 
 The structure for the solution is comprised of three main classes, i.e.
 
@@ -26,7 +26,7 @@ This solution builds upon the sample solution for Project Part A provided by Mat
 
 This solution was used since we believe it makes good use of object oriented principles, and also aids in handling and representing the board along with its pieces. 
 
-##Approach:
+## Approach:
 
 ### Search Strategy:
 For the initial placing phase, the strategy does not make use of complex search algorithms. The strategy being used is as follows;
